@@ -2,31 +2,32 @@ name: C# CI
 
 on:
   push:
-    branches:
-      - main  # Adjust if you use a different default branch
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '5.0.x'  # Specify the version you want to use
+        dotnet-version: '5.0.x' # Update to your required .NET version
+
+    - name: Install libssl
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libssl1.1
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --no-restore
 
-    - name: Run tests
+    - name: Test
       run: dotnet test --no-restore --verbosity normal
